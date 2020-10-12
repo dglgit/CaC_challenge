@@ -6,8 +6,9 @@ import torch
 with open('./Data_and_models/stopwords.txt') as stops:
     for i in stops:
         stopwords = eval(i)
+   
 
-#model = torch.load('./model80')
+#model = torch.load('./Data_and_models/model80')
 
 
 def remove_stops(x, tolist=False):
@@ -16,7 +17,7 @@ def remove_stops(x, tolist=False):
     else:
         return filter(lambda x: x not in stopwords, x)
 
-
+#probably won't be used since google already sorts the results fairly well
 def scorer(x, target):
     scores = {'p': 1, 'h': 3, 'meta': 8, 'title': 10, }
     target = remove_stops(target)
