@@ -1,3 +1,4 @@
+__author__="Douglas Lin"
 import torch
 import torch.nn as nn
 from data_extraction import *
