@@ -1,0 +1,7 @@
+Data used for training and validation was downloaded from:
+https://raw.githubusercontent.com/susanli2016/NLP-with-Python/master/data/corona_fake.csv
+
+The final working model was made with the help of this blog:
+http://peterbloem.nl/blog/transformers
+
+This project was made by Douglas Lin, Shashank Kamal, and Anirudh Iyengar
