@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from data_extraction import *
 device=torch.device('cpu')
-state_dict_70=torch.load('/Users/ji_tzuoh_lin/Desktop/python_stuff/Data_and_models/model276')
 
 
 
@@ -71,10 +70,10 @@ class c_transformer(nn.Module):
         classes = self.fc(attended).mean(dim=1)
         return torch.sigmoid(classes.reshape(-1))
 
-model_75=torch.load('/Users/ji_tzuoh_lin/Desktop/python_stuff/Data_and_models/model_75v2')
+model_75=torch.load('./Data_and_models/model_75v2')
 print(model_75('fdhfha'))
 
-best_model=torch.load('./model79')
+best_model=torch.load('./model80')
 correct=0
 best_model.eval()
 with torch.no_grad():
