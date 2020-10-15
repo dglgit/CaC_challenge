@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkinter import *
-import tkinter.font as tkFont
 
 LARGE_FONT = ("Verdana", 12)
 
