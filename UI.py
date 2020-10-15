@@ -92,7 +92,7 @@ class PageOne(tk.Frame):
         #print_to.pack()
 
     def firstcb(self):
-        str(print(self.var.get()))
+        print(str(self.var.get()))
 
 
 class PageTwo(tk.Frame):
