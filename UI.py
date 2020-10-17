@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import *
 import tkinter.font as tkFont
-
+from tkinter import ttk
 LARGE_FONT = ("Verdana", 12)
-
+Medium_FONT = ("Verdana", 10)
 
 class SampleApp(tk.Tk):
     def __init__(self):
@@ -25,7 +25,7 @@ class SampleApp(tk.Tk):
         frame = self.frames[cont]
         print(cont.__name__)
         frame.tkraise()
-
+        SampleApp.configure(self, bg="#4f4848")
 
 # Function to test and see of the button is working to switch screens
 # def qf(quickPrint):
@@ -34,54 +34,46 @@ class SampleApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Main Page", font=LARGE_FONT)
-        intro_msg='''Hello! Welcome to Verify-19, the COVID-19 fact checking app.
-         This app uses state of the art deep learning neural networks as well as
-         a searching algorithm to find the best and most reliable sources regarding your inquiry.
-         Simply type a piece of text (maximum 6000 words) or a url into the input box and click the submit button.
-         If it is a url, then the contents of that url will be taken and used as input to the neural network. Else,
-         the raw input text will be used as input. The neural network will then rate the possibility of the input  being real or fake on a scale of 0-1.
-         Finally, a searching algorithm (powered by google) will search the internet for reliable news sources pertaining to your text in question and will display the results.
-         You may choose for the app to only display reliable sources (such as websites with a domain ending in .gov)
-         Just click the button to get started!
-         '''
+        label = tk.Label(self, text="Main Page", font=Medium_FONT)
+        intro_msg='''Hello! Welcome to Verify-19! This is the source of REAL Covid-19 News Validation! Click on our URL checker and validate your news in a flash!
+        We use an advanced neural network that cross-checks your news with trusted sources, like the Mayo Clinic and CDC. What are you waiting for? Verify away!'''
         intro=tk.Label(self, text=intro_msg)
         intro.pack()
         label.pack(pady=10, padx=10)
 
-        button = tk.Button(self, text="Url Checker",
+        button = ttk.Button(self, text="Url Checker",
                            command=lambda: controller.show_frame(PageOne))
         button.pack()
 
-        button2 = tk.Button(self, text="Instructions",
+        button2 = ttk.Button(self, text="Instructions",
                             command=lambda: controller.show_frame(PageTwo))
         button2.pack()
-
+        StartPage.configure(self, bg="#4f4848")
 
 class PageOne(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Url Checker", font=LARGE_FONT)
 
-        button = tk.Button(self, text="Back to Home Screen",
+        button = ttk.Button(self, text="Back to Home Screen",
                            command=lambda: controller.show_frame(StartPage))
         button.pack()
 
-        button2 = tk.Button(self, text="Instructions",
+        button2 = ttk.Button(self, text="Instructions",
                             command=lambda: controller.show_frame(PageTwo))
 
         button2.pack()
         self.title = ("Verify-19")
-        self.entry = tk.Text(self, width=20, height=20, relief=GROOVE, borderwidth=3)
+        self.entry = tk.Text(self, width=40, height=15, relief=GROOVE, borderwidth=3)
         self.entry.pack(side=tk.RIGHT)
         self.button = tk.Button(self, text="Get", command=self.on_button)
         self.button.pack()
         self.var = IntVar()
         self.firstcheckbutton = Checkbutton(self, text="Sort by mentions", variable=self.var, command=self.firstcb)
-        self.url_space = tk.Label(self, text='', height=30, width=14, borderwidth=2, relief=GROOVE)
+        self.url_space = tk.Label(self, text='', height=20, width=30, borderwidth=2, relief=GROOVE)
         self.url_space.pack(side=tk.LEFT)
         self.firstcheckbutton.pack()
-
+        PageOne.configure(self, bg="#4f4848")
 
 
 
@@ -98,15 +90,16 @@ class PageOne(tk.Frame):
 class PageTwo(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Url Checker", font=LARGE_FONT)
+        label = ttk.Label(self, text="Instructions: Please insert the URL for your news that you would like to validate. Make sure that it is less than 6000 characters. Then click the get button and you will get your result! If you would like to sort by mentions, then check that box. It's that easy! , font=LARGE_FONT)
 
-        button = tk.Button(self, text="Go to Url Checker",
+        button = ttk.Button(self, text="Go to Url Checker",
                            command=lambda: controller.show_frame(PageOne))
         button.pack()
-        button2 = tk.Button(self, text="Back to Home Page",
+        button2 = ttk.Button(self, text="Back to Home Page",
                             command=lambda: controller.show_frame(StartPage))
         button2.pack()
 
+        PageTwo.configure(self, bg="#4f4848")
 
 app = SampleApp()
 app.mainloop()
