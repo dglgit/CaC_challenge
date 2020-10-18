@@ -322,7 +322,7 @@ class PageTwo(tk.Frame):
         label = ttk.Label(self,
                           text="Instructions: Please insert the URL for your news that you would like to validate. Make sure that it is less than 6000 characters. Then click the get button and you will get your result! If you would like to sort by mentions, then check that box. It's that easy!",
                           font=LARGE_FONT)
-
+        label.pack()
         button = ttk.Button(self, text="Go to Url Checker",
                             command=lambda: controller.show_frame(PageOne))
         button.pack()
