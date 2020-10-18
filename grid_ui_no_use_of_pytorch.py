@@ -6,12 +6,13 @@ import googlesearch as gs
 from googlesearch import search
 from bs4 import BeautifulSoup as bs
 import requests
-import torch
 
-device = torch.device('cpu')
-with open('./Data_and_models/stopwords.txt') as stops:
-    for i in stops:
-        stopwords = eval(i)
+# import torch
+
+#device = torch.device('cpu')
+# with open('./Data_and_models/stopwords.txt') as stops:
+#     for i in stops:
+#         stopwords = eval(i)
 
 
 def remove_stops(x, tolist=False):
@@ -74,11 +75,11 @@ def isurl(x):
     return 'https://' in str(x)
 
 
-import torch.nn as nn
+# import torch.nn as nn
 from collections import defaultdict
 import string
 
-device = torch.device('cpu')
+# device = torch.device('cpu')
 
 letters = string.ascii_letters + ' !0123456789?'
 
@@ -91,14 +92,14 @@ def enum1(x):
 vocab = {letter: i for i, letter in enum1(letters)}
 vocab = defaultdict(lambda: 0, vocab)
 
-with open('./Data_and_models/stopwords.txt') as stops:
-    for i in stops:
-        stopwords = eval(i)
+# with open('./Data_and_models/stopwords.txt') as stops:
+#     for i in stops:
+#         stopwords = eval(i)
 
 
 def word2tensor(word):
     tens = [vocab[i] for i in word]
-    return torch.tensor(tens) if len(tens) > 0 else torch.tensor([0])
+    # return torch.tensor(tens) if len(tens) > 0 else torch.tensor([0])
 
 
 def remove_stops(x, tolist=False):
@@ -108,82 +109,84 @@ def remove_stops(x, tolist=False):
         return filter(lambda x: x not in stopwords, x)
 
 
-class Thiccatten(nn.Module):
-    def __init__(self, k, heads):
-        super().__init__()
-        self.qw = nn.Linear(k, k * heads)
-        self.kw = nn.Linear(k, k * heads)
-        self.vw = nn.Linear(k, k * heads)
-        self.fc = nn.Linear(k * heads, k)
-        self.heads = heads
-
-    def forward(self, x):
-        b, t, k = x.size()
-        h = self.heads
-        q = self.qw(x).view(b, t, h, k)
-        key = self.kw(x).view(b, t, h, k)
-        v = self.vw(x).view(b, t, h, k)
-        keys = key.transpose(1, 2).contiguous().view(b * h, t, k)
-        queries = q.transpose(1, 2).contiguous().view(b * h, t, k)
-        values = v.transpose(1, 2).contiguous().view(b * h, t, k)
-        keys = keys / (k ** 0.25)
-        queries = queries / (k ** 0.25)
-        dot = torch.bmm(keys, queries.transpose(1, 2))
-        scaled_dot = torch.softmax(dot, dim=2)
-        out = torch.bmm(scaled_dot, values).view(b, h, t, k)
-        out = out.transpose(1, 2).contiguous().view(b, t, k * h)
-        return self.fc(out)
-
-
-class tblock(nn.Module):
-    def __init__(self, k, heads):
-        super().__init__()
-
-        self.attention = Thiccatten(k, heads=heads)
-
-        self.norm1 = nn.LayerNorm(k)
-        self.norm2 = nn.LayerNorm(k)
-
-        self.ff = nn.Sequential(
-            nn.Linear(k, 4 * k),
-            nn.ReLU(),
-            nn.Linear(4 * k, k))
-
-    def forward(self, x):
-        attended = self.attention(x)
-        x = self.norm1(attended + x)
-
-        fedforward = self.ff(x)
-        return self.norm2(fedforward + x)
+# class Thiccatten(nn.Module):
+#     def __init__(self, k, heads):
+#         super().__init__()
+#         self.qw = nn.Linear(k, k * heads)
+#         self.kw = nn.Linear(k, k * heads)
+#         self.vw = nn.Linear(k, k * heads)
+#         self.fc = nn.Linear(k * heads, k)
+#         self.heads = heads
+#
+#     def forward(self, x):
+#         b, t, k = x.size()
+#         h = self.heads
+#         q = self.qw(x).view(b, t, h, k)
+#         key = self.kw(x).view(b, t, h, k)
+#         v = self.vw(x).view(b, t, h, k)
+#         keys = key.transpose(1, 2).contiguous().view(b * h, t, k)
+#         queries = q.transpose(1, 2).contiguous().view(b * h, t, k)
+#         values = v.transpose(1, 2).contiguous().view(b * h, t, k)
+#         keys = keys / (k ** 0.25)
+#         queries = queries / (k ** 0.25)
+#         dot = torch.bmm(keys, queries.transpose(1, 2))
+#         scaled_dot = torch.softmax(dot, dim=2)
+#         out = torch.bmm(scaled_dot, values).view(b, h, t, k)
+#         out = out.transpose(1, 2).contiguous().view(b, t, k * h)
+#         return self.fc(out)
 
 
-class c_transformer(nn.Module):
-    def __init__(self, heads=8, depth=7, word_embed=20, max_seq=6000):
-        super().__init__()
-        self.transformers = nn.Sequential(*[tblock(word_embed, heads) for i in range(depth)])
-        self.w_embed = nn.EmbeddingBag(len(vocab) + 1, word_embed)
-        self.pos_embed = nn.Embedding(max_seq + 1, word_embed)
-        self.fc = nn.Linear(word_embed, 1)
+# class tblock(nn.Module):
+#     def __init__(self, k, heads):
+#         super().__init__()
+#
+#         self.attention = Thiccatten(k, heads=heads)
+#
+#         self.norm1 = nn.LayerNorm(k)
+#         self.norm2 = nn.LayerNorm(k)
+#
+#         self.ff = nn.Sequential(
+#             nn.Linear(k, 4 * k),
+#             nn.ReLU(),
+#             nn.Linear(4 * k, k))
+#
+#     def forward(self, x):
+#         attended = self.attention(x)
+#         x = self.norm1(attended + x)
+#
+#         fedforward = self.ff(x)
+#         return self.norm2(fedforward + x)
+#
 
-    def forward(self, x):
-        w = torch.stack(
-            [self.w_embed(word2tensor(i).unsqueeze(0), None) for i in remove_stops(x.split(' '))]).transpose(0, 1).to(
-            device)
-        b, t, k = w.size()
-        pos_embeddings = self.pos_embed(torch.arange(t)).expand(b, t, k)
-        attended = self.transformers(pos_embeddings + w)
-        classes = self.fc(attended).mean(dim=1)
-        return torch.sigmoid(classes.reshape(-1))
-
-
-text_model = torch.load('./Data_and_models/model80')
-title_model = torch.load('./Data_and_models/title_model85')
-text_model.eval()
-title_model.eval()
+# class c_transformer(nn.Module):
+#     def __init__(self, heads=8, depth=7, word_embed=20, max_seq=6000):
+#         super().__init__()
+#         self.transformers = nn.Sequential(*[tblock(word_embed, heads) for i in range(depth)])
+#         self.w_embed = nn.EmbeddingBag(len(vocab) + 1, word_embed)
+#         self.pos_embed = nn.Embedding(max_seq + 1, word_embed)
+#         self.fc = nn.Linear(word_embed, 1)
+#
+#     def forward(self, x):
+#         w = torch.stack(
+#             [self.w_embed(word2tensor(i).unsqueeze(0), None) for i in remove_stops(x.split(' '))]).transpose(0, 1).to(
+#             device)
+#         b, t, k = w.size()
+#         pos_embeddings = self.pos_embed(torch.arange(t)).expand(b, t, k)
+#         attended = self.transformers(pos_embeddings + w)
+#         classes = self.fc(attended).mean(dim=1)
+#         return torch.sigmoid(classes.reshape(-1))
+#
+#
+# text_model = torch.load('./Data_and_models/model80')
+# title_model = torch.load('./Data_and_models/title_model85')
+# text_model.eval()
+# title_model.eval()
 LARGE_FONT = ("TMR", 12)
 Medium_FONT = ("TMR", 10)
 
 
+#
+#
 class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -191,7 +194,7 @@ class SampleApp(tk.Tk):
         container.grid()
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-
+        Tk.geometry(self, "300x300")
         self.frames = {}
         # Creating a loop to load all of the pages when buttons are pressed.
         for F in (StartPage, PageTwo, PageOne):
@@ -214,12 +217,11 @@ class SampleApp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Main Page", font=Medium_FONT)
         intro_msg = '''Hello! Welcome to Verify-19! This is the source of REAL Covid-19 News Validation! Click on our URL checker and validate your news in a flash!
         We use an advanced neural network that cross-checks your news with trusted sources, like the Mayo Clinic and CDC. What are you waiting for? Verify away!'''
-        intro = tk.Label(self, text=intro_msg)
+        intro = tk.Label(self, text=intro_msg, wraplength=300)
         intro.grid()
-        label.grid()
+
 
         button = ttk.Button(self, text="Url Checker",
                             command=lambda: controller.show_frame(PageOne))
@@ -257,38 +259,40 @@ class PageOne(tk.Frame):
         self.secondcheckbutton = Checkbutton(self, text="show google results", variable=self.show_var,
                                              command=self.second_cb)
         self.secondcheckbutton.grid()
-        self.url_space.grid()
         self.firstcheckbutton.grid()
         self.result_label = Label(self, text='', bg='#4f4848')
         self.result_label.grid()
         self.status = Label(self, text='awaiting input')
         self.status.grid()
-        self.query=None
+        self.query = None
         self.user_input = None
         PageOne.configure(self, bg="#4f4848")
 
     def on_button(self):
+        pass
         user_input = self.entry.get('1.0', tk.END)
         print(user_input)
         if isurl(user_input):
             self.titles, texts = scraper(user_input)
-            result = (text_model(texts) + title_model(self.titles)) / 2
+            # result = (text_model(texts) + title_model(self.titles)) / 2
         elif len(user_input.split(' ')) > 160:
-            result = text_model(user_input)
+            pass
+            # result = text_model(user_input)
         else:
-            result = title_model(user_input)
-        self.result_label.config(text=f'Probability of being true: {str(100*float(result))}%')
+            pass
+            # result = title_model(user_input)
+        self.result_label.config(text=f'Probability of being true: {str(100*float(0))}%')
         if self.show_var.get():
             self.status.config(text='fetching reliable sources...')
             self.query = self.titles if isurl(user_input) else user_input
             print('something')
-            #print(googler(self.query))
+            print(googler(self.query))
             sources = big_list2str(googler(self.query,self.show_var.get()))
-            #print(self.query, sources)
-            self.url_space.delete(1.0,'end')
-            self.url_space.insert(1.0,sources)
-            self.status.config(text='done, now awaiting further input')
-            self.user_input = user_input
+            print(self.query, sources)
+        self.entry.delete(1.0,'end')
+        self.entry.insert(1.0,sources)
+        self.status.config(text='done, now awaiting further input')
+        self.user_input = user_input
 
     def firstcb(self):
         print(str(self.var.get()))
@@ -308,6 +312,7 @@ class PageOne(tk.Frame):
                 print(self.query, sources)
                 self.url_space.config(text=sources, bg='white', height=40, width=40)
                 self.status.config(text='done, now awaiting further input')
+
 
 
 class PageTwo(tk.Frame):
