@@ -219,7 +219,6 @@ class Encode_decode_atten(nn.Module):
 
 
 def train_atten():
-    print('blyat')
     attention = Encode_decode_atten()
     lossfunc = torch.nn.BCELoss()
     optim = torch.optim.Adam(attention.parameters(), 0.01)
