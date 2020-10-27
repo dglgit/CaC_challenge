@@ -6,4 +6,5 @@ Deprecated folder contains previous data_extraction program as well as prototype
 
 Notebooks folder contains colab notebooks but the output doesn't format properly
 
-py_notebooks contains the colab files in .py file form weithout outputs
+old_models contains the colab files in .py file form without outputs
+Prototype models can be found there.
